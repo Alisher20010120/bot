@@ -18,33 +18,24 @@ jobs:
           username: ${{ secrets.USERNAME }}
           key: ${{ secrets.SSH_KEY }}
           script: |
-            # 1. Docker o'rnatilganligini tekshirish va o'rnatish
             if ! [ -x "$(command -v docker)" ]; then
               sudo apt update && sudo apt install docker.io -y
               sudo systemctl start docker
               sudo systemctl enable docker
             fi
 
-            # 2. Serverda bot papkasini tayyorlash
             mkdir -p ~/bot && cd ~/bot
             
-            # 3. Kodni GitHub'dan tortib olish (Klon yoki Pull)
             if [ ! -d ".git" ]; then
               git clone https://github.com/Alisher20010120/bot.git .
             else
-              # Serverdagi kodni GitHub'dagi bilan sinxronlash
               git reset --hard
               git pull origin main
             fi
 
-            # 4. Docker imidjini yig'ish (Permission denied xatosini oldini olish uchun sudo bilan)
             sudo docker build -t bot-app .
             
-            # 5. Eski konteyner bo'lsa to'xtatish va o'chirish
             sudo docker stop bot-container || true
             sudo docker rm bot-container || true
             
-            # 6. Yangi konteynerni ishga tushirish
-            # Eslatma: Agar botingizga qo'shimcha Environment Variable (masalan: BOT_TOKEN) 
-            # kerak bo'lsa, quyidagi qatorda -e BOT_TOKEN="${{ secrets.BOT_TOKEN }}" qo'shishingiz mumkin
-            sudo docker run -d --name bot-container --restart always bot-app
+            sudo docker run -d --name bot-container --restart always --network host bot-app
