@@ -38,4 +38,6 @@ jobs:
             sudo docker stop bot-container || true
             sudo docker rm bot-container || true
             
-            sudo docker run -d --name bot-container --restart always --network host bot-app
+            sudo docker run -d --name bot-container \
+              -e BOT_TOKEN="${{ secrets.BOT_TOKEN }}" \
+              --restart always --network host bot-app
