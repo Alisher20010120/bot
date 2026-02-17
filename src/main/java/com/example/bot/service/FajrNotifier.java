@@ -27,7 +27,7 @@ public class FajrNotifier {
         this.prayerTimeService = prayerTimeService;
     }
 
-    @Scheduled(cron = "0 55 14 * * *", zone = "Asia/Tashkent")
+    @Scheduled(cron = "0 0 5 * * *", zone = "Asia/Tashkent")
     public void sendDailyPrayerTimes() {
         List<UserEntity> activeUsers = userRepository.findAllByNotificationsEnabledTrue();
 

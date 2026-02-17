@@ -42,10 +42,8 @@ public class PrayerTimeService {
                 return "⚠️ Ma'lumot topilmadi.";
             }
 
-            // Bugungi sana
             String today = LocalDate.now().format(DateTimeFormatter.ofPattern("dd.MM.yyyy"));
 
-            // Siz tanlagan stikerlar bilan formatlash
             return String.format(
                     "\uD83C\uDF19%s shahri uchun bugungi namoz vaqtlari:\n" +
                     "📅 Sana: %s\n\n" +
