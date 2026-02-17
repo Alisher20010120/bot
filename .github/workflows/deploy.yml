@@ -18,27 +18,33 @@ jobs:
           username: ${{ secrets.USERNAME }}
           key: ${{ secrets.SSH_KEY }}
           script: |
-            # Docker o'rnatish
+            # 1. Docker o'rnatilganligini tekshirish va o'rnatish
             if ! [ -x "$(command -v docker)" ]; then
               sudo apt update && sudo apt install docker.io -y
               sudo systemctl start docker
-              sudo usermod -aG docker ubuntu
+              sudo systemctl enable docker
             fi
 
-            # Serverda bot uchun papka yaratish
+            # 2. Serverda bot papkasini tayyorlash
             mkdir -p ~/bot && cd ~/bot
             
-            # Kodni klon qilish yoki yangilash
+            # 3. Kodni GitHub'dan tortib olish (Klon yoki Pull)
             if [ ! -d ".git" ]; then
               git clone https://github.com/Alisher20010120/bot.git .
             else
+              # Serverdagi kodni GitHub'dagi bilan sinxronlash
+              git reset --hard
               git pull origin main
             fi
 
-            # Docker imidjini yig'ish (nomini shunchaki 'bot-app' qildik)
-            docker build -t bot-app .
+            # 4. Docker imidjini yig'ish (Permission denied xatosini oldini olish uchun sudo bilan)
+            sudo docker build -t bot-app .
             
-            # Eski konteynerni to'xtatish va yangisini ishga tushirish
-            docker stop bot-container || true
-            docker rm bot-container || true
-            docker run -d --name bot-container --restart always bot-app
+            # 5. Eski konteyner bo'lsa to'xtatish va o'chirish
+            sudo docker stop bot-container || true
+            sudo docker rm bot-container || true
+            
+            # 6. Yangi konteynerni ishga tushirish
+            # Eslatma: Agar botingizga qo'shimcha Environment Variable (masalan: BOT_TOKEN) 
+            # kerak bo'lsa, quyidagi qatorda -e BOT_TOKEN="${{ secrets.BOT_TOKEN }}" qo'shishingiz mumkin
+            sudo docker run -d --name bot-container --restart always bot-app
