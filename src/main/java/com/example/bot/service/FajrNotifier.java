@@ -3,13 +3,12 @@ package com.example.bot.service;
 import com.example.bot.bot.MyTelegramBot;
 import com.example.bot.entity.UserEntity;
 import com.example.bot.repository.UserEntityRepository;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.annotation.Lazy;
 import org.springframework.scheduling.annotation.Scheduled;
 import org.springframework.stereotype.Component;
 import org.telegram.telegrambots.meta.api.methods.send.SendMessage;
 
-import java.time.LocalDate;
-import java.time.format.DateTimeFormatter;
 import java.util.List;
 
 @Component
@@ -17,32 +16,40 @@ public class FajrNotifier {
 
     private final UserEntityRepository userRepository;
     private final MyTelegramBot myBot;
+    private final PrayerTimeService prayerTimeService;
 
-    public FajrNotifier(UserEntityRepository userRepository, @Lazy MyTelegramBot myBot) {
+    @Autowired
+    public FajrNotifier(UserEntityRepository userRepository,
+                        @Lazy MyTelegramBot myBot, 
+                        PrayerTimeService prayerTimeService) {
         this.userRepository = userRepository;
         this.myBot = myBot;
+        this.prayerTimeService = prayerTimeService;
     }
 
-    @Scheduled(cron = "0 30 14 * * *", zone = "Asia/Tashkent")
-    public void sendMorningNotification() {
-        String today = LocalDate.now().format(DateTimeFormatter.ofPattern("dd.MM.yyyy"));
-        String messageText = "🌙 Assalomu alaykum!\n\n" +
-                             "Bugun: " + today + "\n" +
-                             "Bomdod vaqti bo'ldi. Namoz uyqudan afzaldir! 🤲";
+    @Scheduled(cron = "0 55 14 * * *", zone = "Asia/Tashkent")
+    public void sendDailyPrayerTimes() {
+        List<UserEntity> activeUsers = userRepository.findAllByNotificationsEnabledTrue();
 
-        List<UserEntity> enabledUsers = userRepository.findAllByNotificationsEnabledTrue();
-
-        for (UserEntity user : enabledUsers) {
+        for (UserEntity user : activeUsers) {
             try {
+                String city = user.getCity();
+                
+                if (city == null || city.equals("aniqlanmagan")) {
+                    continue;
+                }
+
+                String prayerTimesMessage = prayerTimeService.getPrayerTimes(city);
+
                 SendMessage sm = new SendMessage();
                 sm.setChatId(user.getChatId().toString());
-                sm.setText(messageText);
+                sm.setText(prayerTimesMessage);
                 
                 myBot.execute(sm);
+
             } catch (Exception e) {
-                System.err.println("Xabarnoma yuborilmadi ChatId: " + user.getChatId());
+                System.err.println("Xabarnoma yuborishda xatolik (User: " + user.getChatId() + "): " + e.getMessage());
             }
         }
-        System.out.println("Bomdod bildirishnomasi " + enabledUsers.size() + " ta userga yuborildi.");
     }
 }
