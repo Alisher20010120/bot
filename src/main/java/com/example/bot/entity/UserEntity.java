@@ -16,5 +16,8 @@ public class UserEntity {
     private String firstName;
     private String username;
     private String city;
+    private boolean notificationsEnabled;
+    private int tasbehCount = 0;
+    private int tasbehFullCount = 0;
     private LocalDateTime registeredAt;
 }
