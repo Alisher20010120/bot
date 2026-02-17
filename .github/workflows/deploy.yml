@@ -1,0 +1,44 @@
+name: Deploy to AWS
+
+on:
+  push:
+    branches: [ "main" ]
+
+jobs:
+  deploy:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v3
+
+      - name: Deploy via SSH
+        uses: appleboy/ssh-action@master
+        with:
+          host: ${{ secrets.HOST }}
+          username: ${{ secrets.USERNAME }}
+          key: ${{ secrets.SSH_KEY }}
+          script: |
+            # Docker o'rnatish
+            if ! [ -x "$(command -v docker)" ]; then
+              sudo apt update && sudo apt install docker.io -y
+              sudo systemctl start docker
+              sudo usermod -aG docker ubuntu
+            fi
+
+            # Serverda bot uchun papka yaratish
+            mkdir -p ~/bot && cd ~/bot
+            
+            # Kodni klon qilish yoki yangilash
+            if [ ! -d ".git" ]; then
+              git clone https://github.com/Alisher20010120/bot.git .
+            else
+              git pull origin main
+            fi
+
+            # Docker imidjini yig'ish (nomini shunchaki 'bot-app' qildik)
+            docker build -t bot-app .
+            
+            # Eski konteynerni to'xtatish va yangisini ishga tushirish
+            docker stop bot-container || true
+            docker rm bot-container || true
+            docker run -d --name bot-container --restart always bot-app
