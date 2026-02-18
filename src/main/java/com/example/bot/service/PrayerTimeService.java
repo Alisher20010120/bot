@@ -52,16 +52,16 @@ public class PrayerTimeService {
 
             if (isRamadanRequest) {
                 return String.format(
-                        "🌙 **Ro'za (Taqvim) vaqtlari**\n" +
+                        "🌙 Ro'za (Taqvim) vaqtlari\n" +
                                 "📍 Shahar: %s\n" +
                                 "📅 Sana: %s\n\n" +
-                                "⚪️ **Saharlik (Og'iz yopish): %s**\n" +
-                                "🌅 **Iftorlik (Og'iz ochish): %s**\n\n" +
-                                "🤲 **Saharlik duosi:**\n" +
+                                "⚪️ Saharlik (Og'iz yopish): %s\n" +
+                                "🌅 Iftorlik (Og'iz ochish): %s\n\n" +
+                                "🤲 Saharlik duosi:\n\n" +
                                 "Navaytu an asuma sovma shahri ramazona minal fajri ilal mag'ribi, xolisan lillahi ta'ala. Allohu akbar.\n\n" +
-                                "🤲 **Iftorlik duosi:**\n" +
+                                "🤲 Iftorlik duosi:\n\n" +
                                 "Allohumma laka sumtu va bika amantu va a'layka tavakkaltu va a'la rizqika aftartu, fag'firli ya g'offaru ma qoddamtu va ma axxortu.\n\n" +
-                                "⚠️ **Eslatma:** Saharlik vaqti (og'iz yopish) ko'rsatilgan vaqtdan 10-15 daqiqa avval yakunlanishi afzaldir.",
+                                "⚠️ Eslatma: Saharlik vaqti (og'iz yopish) ko'rsatilgan vaqtdan 10-15 daqiqa avval yakunlanishi afzaldir.",
                         city.toUpperCase(),
                         today,
                         timeList.get(0),

@@ -191,8 +191,8 @@ public class MyTelegramBot extends TelegramLongPollingBot {
 
                         SendMessage notifyMsg = new SendMessage();
                         notifyMsg.setChatId(chatId.toString());
-                        notifyMsg.setText("🔔 **Bildirishnomalar sozlamalari**\n\n" +
-                                "Sizga bildirishnoma yuborish hozirda: **" + statusText + "**\n\n" +
+                        notifyMsg.setText("🔔 Bildirishnomalar sozlamalari\n\n" +
+                                "Sizga bildirishnoma yuborish hozirda: " + statusText + "\n\n" +
                                 "Holatni o'zgartirishni xohlaysizmi? 👇");
 
                         notifyMsg.setReplyMarkup(keyboardService.getNotificationSwitchKeyboard(isEnabled));
@@ -220,8 +220,8 @@ public class MyTelegramBot extends TelegramLongPollingBot {
                 userService.updateNotification(chatId, newState);
 
                 String statusText = newState ? "faol ✅" : "o'chirilgan ❌";
-                String newText = "🔔 **Bildirishnomalar sozlamalari**\n\n" +
-                        "Sizga bildirishnoma yuborish hozirda: **" + statusText + "**\n\n" +
+                String newText = "🔔 Bildirishnomalar sozlamalari\n\n" +
+                        "Sizga bildirishnoma yuborish hozirda: " + statusText + "\n\n" +
                         "Holatni o'zgartirishni xohlaysizmi? 👇";
 
                 executeEditMessage(chatId, messageId, newText, keyboardService.getNotificationSwitchKeyboard(newState));
