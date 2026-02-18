@@ -197,4 +197,39 @@ public class KeyboardService {
         markup.setKeyboard(keyboard);
         return markup;
     }
+
+    public ReplyKeyboardMarkup getDuaMenu() {
+        ReplyKeyboardMarkup markup = new ReplyKeyboardMarkup();
+        markup.setResizeKeyboard(true);
+        markup.setOneTimeKeyboard(false);
+
+        List<KeyboardRow> rows = new ArrayList<>();
+
+        // 1-qator
+        KeyboardRow row1 = new KeyboardRow();
+        row1.add("☀️ Tong va Kech");
+        row1.add("🍽 Ovqatlanish");
+
+        // 2-qator
+        KeyboardRow row2 = new KeyboardRow();
+        row2.add("🏠 Uy va Ko'cha");
+        row2.add("💤 Uyqu duolari");
+
+        // 3-qator
+        KeyboardRow row3 = new KeyboardRow();
+        row3.add("🕌 Masjid va Namoz");
+        row3.add("🤲 Shifo va Himoya");
+
+        // 4-qator
+        KeyboardRow row4 = new KeyboardRow();
+        row4.add("⬅️ Orqaga");
+
+        rows.add(row1);
+        rows.add(row2);
+        rows.add(row3);
+        rows.add(row4);
+
+        markup.setKeyboard(rows);
+        return markup;
+    }
 }

@@ -85,7 +85,13 @@ public class MyTelegramBot extends TelegramLongPollingBot {
                         }
                         break;
                     case "🌙 Ro'za vaqtlari":
-                        sendAnswer(chatId, "Tez orada ishga tushadi");
+                         userCity = userService.getUserCity(chatId);
+                        if (userCity == null || userCity.equals("aniqlanmagan")) {
+                            sendAnswer(chatId, "Iltimos, avval sozlamalardan shaharni tanlang! 📍");
+                        } else {
+                            String ramadanResponse = prayerTimeService.getRamadanTimes(userCity);
+                            sendAnswer(chatId, ramadanResponse);
+                        }
                         break;
                     case "📿 Tasbeh":
                         int current = userService.getTasbehCount(chatId);
@@ -106,7 +112,48 @@ public class MyTelegramBot extends TelegramLongPollingBot {
                         executeMessage(tasbehMsg);
                         break;
                     case "🤲 Kundalik duolar":
-                        sendAnswer(chatId, "🤲 Kundalik duolar to'plami tez orada qo'shiladi.");
+                        SendMessage duaMsg = new SendMessage();
+                        duaMsg.setChatId(chatId.toString());
+                        duaMsg.setText("🤲 **Kundalik o'qiladigan duolar bo'limi**\n\nQuyidagi toifalardan birini tanlang:");
+                        duaMsg.setReplyMarkup(keyboardService.getDuaMenu());
+                        executeMessage(duaMsg);
+                        break;
+
+                    case "☀️ Tong va Kech":
+                        sendAnswer(chatId, "☀️ **Tonggi duo:**\n«اللهُمَّ بِكَ أَصْبَحْنَا وَبِكَ أَمْسَيْنَا وَبِكَ نَحْيَا وَبِكَ نَمُوتُ وَإِلَيْكَ النُّشُورُ\n\n Аллоҳумма бика асбаҳнаа ва бика амсайнаа ва бика наҳйаа ва бика намууту ва илайкан нушуур»\n\n(Маъноси: Аллоҳим, Сенинг номинг ила тонг оттирдик, Сенинг номинг ила кеч киргиздик. Сенинг номинг ила тириламиз ва Сенинг номинг ила ўламиз. Ва Сенга қайтажакмиз.)\n\n🌙 **Kechki duo:**\n\n«اللهُمَّ بِكَ أَمْسَيْنَا وَبِكَ أَصْبَحْنَا وَبِكَ نَحْيَا وَبِكَ نَمُوتُ وَإِلَيْكَ الْمَصِير »\n\n«Аллоҳумма бика амсайнаа ва бика наҳйаа ва бика намууту ва илайкал масийр».\n\n(Маъноси:“Аллоҳим, Сенинг номинг ила кеч киргиздик. Сенинг номинг ила тириламиз ва Сенинг номинг ила вафот этамиз. Ва Сенга қайтажакмиз”)");
+
+                        break;
+
+                    case "🍽 Ovqatlanish":
+                        sendAnswer(chatId, "🍽 **Ovqatdan oldin:**\n«Bismillahir Rohmanir Rohiym»\n\n✅ **Ovqatdan keyin:**\n««Alhamdulillahillaziy at’amana va saqona vaja’alana minal-muslimiyn».\n" +
+                                "\n" +
+                                "Ma’nosi: «Bizni yedirib-ichirgan va musulmonlardan qilgan Allohga hamd bo‘lsin»»");
+                        break;
+
+                    case "🏠 Uy va Ko'cha":
+                        sendAnswer(chatId, "🏠 **Uyga kirayotganda:**\nAllohumma inniy as’aluka xoyrol-mavlaji va xoyrol-maxroji bismillahi valajna va bismillahi xorojna va ’alallohi Robbina tavakkalna.\n" +
+                                "\n" +
+                                "Ma’nosi: «Yo Alloh, Sendan kirayotganim va chiqayotganim joylarning yaxshisini so‘rayman. Allohning nomi ila kirdik, Allohning nomi ila chiqdik. Rabbimiz Allohga tavakkul etdik».\n\n🚶 **Uydan chiqayotganda:**\n«Bismillahi tavakkaltu ’alallohi, va la havla va la quvvata illa billah».\n" +
+                                "\n" +
+                                "Ma’nosi: «Alloh nomi ila, Allohga tavakkal qilgan holda... Harakat va quvvat Allohning irodasisiz bo‘lmas» ");
+                        break;
+
+                    case "💤 Uyqu duolari":
+                        sendAnswer(chatId, "💤 Yotishdan oldin:\n«Bismika Allohumma amutu va ahya»\n\n🌅 **Uyg'onganda:**\n«Alhamdulillahillaziy ahyana ba'da ma amatana va ilayhin nushur»");
+                        break;
+
+                    case "🕌 Masjid va Namoz":
+                        sendAnswer(chatId, "🕌 Masjidga kirishda:\n\nAllohumma-aftah li abvaba rohmatik.\n" +
+                                "\n" +
+                                "Ma’nosi: «Yo Alloh, menga rahmat eshiklaringni och».\n\n🚪 Masjiddan chiqishda:\n\nAllohumma inni as’aluka min-fazlik.\n" +
+                                "\n" +
+                                "Ma’nosi: «Yo Alloh, Sening fazling va karamingni so‘rayman».");
+                        break;
+
+                    case "🤲 Shifo va Himoya":
+                        sendAnswer(chatId, "🤲 Kasallikka qarshi:\n\n««Allohumma Robban-nasi azhibil-basa, ishfi Antash-shafiy la shifaa illa shifauka, shifaan la yug‘odiru saqoman».\n" +
+                                "«Allohim, ey insonlarning Rabbi, kasallikni mahv etuvchi! Ortda kasallikni qoldirmaydigan shifo ber. Shifo berguvchi faqat O‘zingsan. Sendan o‘zga shifo berguvchi yo‘qdir»...»\n\n🛡 Yomonlikdan himoya:\n\n«\"Bismillahil-laziy la yadurru ma'asmihi shay'un fil-ardi va la fis-samaa'i va huvas-sami'ul-'aliym\n\nMa'nosi:\n" +
+                                "\"Allohning ismi bilan boshlayman. Uning ismi bor ekan, na yerda va na osmonda hech bir narsa zarar bera olmaydi. U eshituvchi va biluvchidir\".»");
                         break;
                     case "🕌 Yaqindagi masjidlar":
                         SendMessage locationRequest = new SendMessage();
